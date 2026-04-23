@@ -4,21 +4,120 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Jennifer APM 버그 리포트 생성기</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
   <!-- (1) 헤더 -->
   <header>
-    <h1>Jennifer APM 버그 리포트 생성기</h1>
-    <p>APM 로그를 붙여넣으면 Claude AI가 심각도·근본원인·해결책을 분석합니다.</p>
+    <div class="header-text">
+      <h1>Jennifer APM 버그 리포트 생성기</h1>
+      <p>APM 로그를 붙여넣으면 Claude AI가 심각도·근본원인·해결책을 분석합니다.</p>
+    </div>
+
+    <div class="header-illustration" aria-hidden="true">
+      <svg viewBox="0 0 400 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- 배경 블롭 -->
+        <circle cx="28"  cy="195" r="58"  fill="#F5C94A" opacity=".2"/>
+        <circle cx="388" cy="18"  r="36"  fill="#5BC4C8" opacity=".18"/>
+
+        <!-- 터미널 창 -->
+        <rect x="48" y="15" width="190" height="160" rx="11" fill="#161D38"/>
+        <rect x="48" y="15" width="190" height="28"  rx="11" fill="#1E2848"/>
+        <rect x="48" y="33" width="190" height="10"        fill="#1E2848"/>
+        <!-- 트래픽 라이트 -->
+        <circle cx="68"  cy="29" r="5" fill="#E8785A"/>
+        <circle cx="84"  cy="29" r="5" fill="#F5C94A"/>
+        <circle cx="100" cy="29" r="5" fill="#52C07A"/>
+
+        <!-- 로그 행 1 — INFO -->
+        <rect x="65"  y="56" width="32" height="5" rx="2.5" fill="#354070"/>
+        <rect x="105" y="54" width="28" height="9" rx="2.5" fill="#52C07A"/>
+        <rect x="141" y="56" width="78" height="5" rx="2.5" fill="#4A5580"/>
+        <!-- 로그 행 2 — INFO -->
+        <rect x="65"  y="71" width="32" height="5" rx="2.5" fill="#354070"/>
+        <rect x="105" y="69" width="28" height="9" rx="2.5" fill="#52C07A"/>
+        <rect x="141" y="71" width="58" height="5" rx="2.5" fill="#4A5580"/>
+        <!-- 로그 행 3 — INFO -->
+        <rect x="65"  y="86" width="32" height="5" rx="2.5" fill="#354070"/>
+        <rect x="105" y="84" width="28" height="9" rx="2.5" fill="#52C07A"/>
+        <rect x="141" y="86" width="90" height="5" rx="2.5" fill="#4A5580"/>
+
+        <!-- 로그 행 4 — ERROR (하이라이트) -->
+        <rect x="56"  y="100" width="174" height="20" rx="4"   fill="#E8785A" opacity=".15"/>
+        <rect x="65"  y="104" width="32"  height="5"  rx="2.5" fill="#E8785A" opacity=".7"/>
+        <rect x="105" y="102" width="34"  height="9"  rx="2.5" fill="#E8785A"/>
+        <rect x="147" y="104" width="68"  height="5"  rx="2.5" fill="#E89080" opacity=".75"/>
+
+        <!-- 로그 행 5 — INFO -->
+        <rect x="65"  y="131" width="32" height="5" rx="2.5" fill="#354070"/>
+        <rect x="105" y="129" width="28" height="9" rx="2.5" fill="#52C07A"/>
+        <rect x="141" y="131" width="68" height="5" rx="2.5" fill="#4A5580"/>
+        <!-- 로그 행 6 — INFO -->
+        <rect x="65"  y="146" width="32" height="5" rx="2.5" fill="#354070"/>
+        <rect x="105" y="144" width="28" height="9" rx="2.5" fill="#52C07A"/>
+        <rect x="141" y="146" width="50" height="5" rx="2.5" fill="#4A5580"/>
+
+        <!-- 스택트레이스 줄 -->
+        <rect x="75" y="161" width="148" height="4" rx="2" fill="#354070" opacity=".55"/>
+        <rect x="75" y="169" width="116" height="4" rx="2" fill="#354070" opacity=".38"/>
+
+        <!-- 돋보기 -->
+        <circle cx="305" cy="92" r="44" fill="white" opacity=".04"/>
+        <circle cx="305" cy="92" r="42" stroke="#5BC4C8" stroke-width="8"/>
+        <!-- 렌즈 반사 -->
+        <circle cx="289" cy="76" r="12" fill="white" opacity=".08"/>
+        <!-- 손잡이 -->
+        <line x1="335" y1="122" x2="362" y2="149" stroke="#5BC4C8" stroke-width="10" stroke-linecap="round"/>
+        <!-- 렌즈 내 에러 텍스트 -->
+        <rect x="279" y="85" width="50" height="9"  rx="4.5" fill="#E8785A" opacity=".9"/>
+        <rect x="279" y="100" width="36" height="5" rx="2.5" fill="white"   opacity=".22"/>
+        <rect x="279" y="110" width="46" height="5" rx="2.5" fill="white"   opacity=".15"/>
+
+        <!-- 버그 마스코트 -->
+        <g transform="translate(370,154)">
+          <ellipse cx="0" cy="7"  rx="10" ry="12" fill="#E8785A"/>
+          <circle  cx="0" cy="-7" r="8"           fill="#E8785A"/>
+          <line x1="0" y1="-1" x2="0" y2="18" stroke="#D06050" stroke-width="1.5" opacity=".35"/>
+          <circle cx="-3.5" cy="-8" r="2.5" fill="white"/>
+          <circle cx=" 3.5" cy="-8" r="2.5" fill="white"/>
+          <circle cx="-3.5" cy="-8" r="1"   fill="#1A2040"/>
+          <circle cx=" 3.5" cy="-8" r="1"   fill="#1A2040"/>
+          <line x1="-3" y1="-14" x2="-7" y2="-21" stroke="#E8785A" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1=" 3" y1="-14" x2=" 7" y2="-21" stroke="#E8785A" stroke-width="1.8" stroke-linecap="round"/>
+          <circle cx="-8" cy="-22" r="2" fill="#F5C94A"/>
+          <circle cx=" 8" cy="-22" r="2" fill="#F5C94A"/>
+          <line x1="-10" y1="0"  x2="-17" y2="-3" stroke="#E8785A" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-10" y1="7"  x2="-17" y2="7"  stroke="#E8785A" stroke-width="2" stroke-linecap="round"/>
+          <line x1="-10" y1="14" x2="-17" y2="17" stroke="#E8785A" stroke-width="2" stroke-linecap="round"/>
+          <line x1=" 10" y1="0"  x2=" 17" y2="-3" stroke="#E8785A" stroke-width="2" stroke-linecap="round"/>
+          <line x1=" 10" y1="7"  x2=" 17" y2="7"  stroke="#E8785A" stroke-width="2" stroke-linecap="round"/>
+          <line x1=" 10" y1="14" x2=" 17" y2="17" stroke="#E8785A" stroke-width="2" stroke-linecap="round"/>
+        </g>
+
+        <!-- 장식 점 -->
+        <circle cx="32"  cy="44"  r="5.5" fill="#5BC4C8" opacity=".45"/>
+        <circle cx="18"  cy="70"  r="3.5" fill="#5BC4C8" opacity=".3"/>
+        <circle cx="258" cy="178" r="5"   fill="#F5C94A"  opacity=".55"/>
+        <circle cx="240" cy="191" r="3.5" fill="#F5C94A"  opacity=".4"/>
+
+        <!-- 스파클 -->
+        <g transform="translate(378,46)" opacity=".7">
+          <rect x="-1.5" y="-8" width="3" height="16" rx="1.5" fill="#F5C94A"/>
+          <rect x="-8" y="-1.5" width="16" height="3" rx="1.5" fill="#F5C94A"/>
+          <rect x="-1.5" y="-8" width="3" height="16" rx="1.5" fill="#F5C94A" transform="rotate(45)"/>
+          <rect x="-8" y="-1.5" width="16" height="3" rx="1.5" fill="#F5C94A" transform="rotate(45)"/>
+        </g>
+      </svg>
+    </div>
   </header>
 
   <main>
 
     <!-- (2) API 키 입력 -->
     <section aria-labelledby="apikey-heading">
-      <h2 id="apikey-heading">Anthropic API 키</h2>
+      <h2 id="apikey-heading">Groq API 키</h2>
       <p>키는 세션 동안만 메모리에 보관되며 서버로 전송되지 않습니다.</p>
       <form id="apikey-form" autocomplete="off">
         <label for="apikey-input">API 키</label>
@@ -26,13 +125,28 @@
           type="password"
           id="apikey-input"
           name="apikey"
-          placeholder="sk-ant-..."
+          placeholder="gsk_..."
           required
           spellcheck="false"
         />
         <button type="submit">저장</button>
       </form>
       <output id="apikey-status" role="status" aria-live="polite"></output>
+
+      <details class="apikey-help">
+        <summary>API 키 발급 방법 (무료 · 신용카드 불필요)</summary>
+        <ol>
+          <li>
+            <a href="https://console.groq.com/" target="_blank" rel="noopener noreferrer">
+              console.groq.com
+            </a>에 접속해 회원가입합니다.
+          </li>
+          <li>왼쪽 메뉴에서 <strong>API Keys</strong>를 클릭합니다.</li>
+          <li><strong>Create API Key</strong> 버튼으로 키를 생성합니다.</li>
+          <li>생성된 키(<code>gsk_...</code>)를 복사해 위 입력란에 붙여넣습니다.</li>
+        </ol>
+        <p class="apikey-help-note">무료 티어: 분당 30회, 하루 1,000회 요청 가능. Llama 3.3 70B 모델 사용.</p>
+      </details>
     </section>
 
     <!-- (3) 로그 입력 영역 -->
@@ -74,6 +188,8 @@
             <dd id="result-severity"></dd>
             <dt>발생 시각</dt>
             <dd id="result-timestamp"></dd>
+            <dt>예상 수정 시간</dt>
+            <dd id="result-fix-time"></dd>
           </dl>
         </header>
 
@@ -85,6 +201,11 @@
         <section aria-labelledby="rootcause-heading">
           <h4 id="rootcause-heading">근본 원인</h4>
           <p id="result-root-cause"></p>
+        </section>
+
+        <section aria-labelledby="impact-heading">
+          <h4 id="impact-heading">영향 범위</h4>
+          <p id="result-impact"></p>
         </section>
 
         <section aria-labelledby="solution-heading">
@@ -110,6 +231,33 @@
     <p>로그 데이터는 분석을 위해 Anthropic API로 전송됩니다. 민감 정보 포함 여부를 확인하세요.</p>
   </footer>
 
-  <script type="module" src="app.js"></script>
+  <!-- 브라우저 에러 캡처 — 개발자 도구 없이 에러 확인용 -->
+  <script>
+    const _logEl = document.createElement('div');
+    _logEl.id = 'dev-error-overlay';
+    _logEl.style.cssText = [
+      'position:fixed','bottom:0','left:0','right:0','max-height:40vh',
+      'overflow-y:auto','background:#0f1117','color:#f87171','font:12px/1.5 monospace',
+      'padding:8px 12px','z-index:9999','border-top:2px solid #ef4444','display:none'
+    ].join(';');
+    document.addEventListener('DOMContentLoaded', () => document.body.appendChild(_logEl));
+
+    function _logError(msg) {
+      _logEl.style.display = 'block';
+      const line = document.createElement('div');
+      line.textContent = '[' + new Date().toLocaleTimeString() + '] ' + msg;
+      _logEl.prepend(line);
+      fetch('/log', { method: 'POST', body: msg }).catch(() => {});
+    }
+
+    window.addEventListener('error', e => {
+      _logError('ERROR: ' + e.message + ' (' + e.filename?.split('/').pop() + ':' + e.lineno + ')');
+    });
+
+    window.addEventListener('unhandledrejection', e => {
+      _logError('UNHANDLED REJECTION: ' + (e.reason?.message ?? e.reason ?? e));
+    });
+  </script>
+  <script type="module" src="app.js?v=6"></script>
 </body>
 </html>
