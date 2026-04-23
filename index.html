@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jennifer APM 버그 리포트 생성기</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- (1) 헤더 -->
+  <header>
+    <h1>Jennifer APM 버그 리포트 생성기</h1>
+    <p>APM 로그를 붙여넣으면 Claude AI가 심각도·근본원인·해결책을 분석합니다.</p>
+  </header>
+
+  <main>
+
+    <!-- (2) API 키 입력 -->
+    <section aria-labelledby="apikey-heading">
+      <h2 id="apikey-heading">Anthropic API 키</h2>
+      <p>키는 세션 동안만 메모리에 보관되며 서버로 전송되지 않습니다.</p>
+      <form id="apikey-form" autocomplete="off">
+        <label for="apikey-input">API 키</label>
+        <input
+          type="password"
+          id="apikey-input"
+          name="apikey"
+          placeholder="sk-ant-..."
+          required
+          spellcheck="false"
+        />
+        <button type="submit">저장</button>
+      </form>
+      <output id="apikey-status" role="status" aria-live="polite"></output>
+    </section>
+
+    <!-- (3) 로그 입력 영역 -->
+    <section aria-labelledby="log-heading">
+      <h2 id="log-heading">로그 입력</h2>
+      <form id="log-form">
+        <label for="log-input">제니퍼 APM 로그 붙여넣기</label>
+        <textarea
+          id="log-input"
+          name="log"
+          rows="16"
+          placeholder="ERROR / WARN 로그를 여기에 붙여넣으세요..."
+          required
+          spellcheck="false"
+        ></textarea>
+        <output id="log-meta" aria-live="polite"><!-- 줄 수 · 토큰 추정치 표시 --></output>
+        <button type="submit">분석 시작</button>
+      </form>
+    </section>
+
+    <!-- (4) 분석 결과 영역 -->
+    <section aria-labelledby="result-heading" aria-live="polite">
+      <h2 id="result-heading">분석 결과</h2>
+
+      <!-- 로딩 상태 -->
+      <div id="result-loading" role="status" hidden>
+        <p>Claude가 로그를 분석 중입니다...</p>
+      </div>
+
+      <!-- 오류 상태 -->
+      <div id="result-error" role="alert" hidden></div>
+
+      <!-- 결과 카드 -->
+      <article id="result-card" hidden>
+        <header>
+          <h3>리포트 요약</h3>
+          <dl>
+            <dt>심각도</dt>
+            <dd id="result-severity"></dd>
+            <dt>발생 시각</dt>
+            <dd id="result-timestamp"></dd>
+          </dl>
+        </header>
+
+        <section aria-labelledby="summary-heading">
+          <h4 id="summary-heading">요약</h4>
+          <p id="result-summary"></p>
+        </section>
+
+        <section aria-labelledby="rootcause-heading">
+          <h4 id="rootcause-heading">근본 원인</h4>
+          <p id="result-root-cause"></p>
+        </section>
+
+        <section aria-labelledby="solution-heading">
+          <h4 id="solution-heading">해결책</h4>
+          <ol id="result-solution-list"></ol>
+        </section>
+
+        <section aria-labelledby="stacktrace-heading">
+          <h4 id="stacktrace-heading">관련 스택 트레이스</h4>
+          <pre id="result-stacktrace"><code></code></pre>
+        </section>
+
+        <footer>
+          <button id="export-md-btn" type="button">Markdown으로 내보내기</button>
+        </footer>
+      </article>
+
+    </section>
+
+  </main>
+
+  <footer>
+    <p>로그 데이터는 분석을 위해 Anthropic API로 전송됩니다. 민감 정보 포함 여부를 확인하세요.</p>
+  </footer>
+
+  <script type="module" src="app.js"></script>
+</body>
+</html>
