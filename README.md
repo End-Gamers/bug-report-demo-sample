@@ -1,6 +1,8 @@
 # Jennifer APM 버그 리포트 생성기
 
-Jennifer APM 로그를 붙여넣으면 Groq AI(Llama 3.3 70B)가 심각도·근본원인·해결책을 분석해 경영진용 인시던트 리포트를 자동 생성합니다.
+Jennifer APM 로그를 붙여넣으면 Groq AI(Llama 3.3 70B)가 심각도·근본원인·해결책을 분석해 경영진용 에러 분석 리포트를 자동 생성합니다.
+
+<img width="1848" height="2960" alt="Screenshot_20260424_092240_Chrome" src="https://github.com/user-attachments/assets/ace96203-a188-4894-aaa2-d56dec23f46e" />
 
 ## 개발자 튜토리얼
 
