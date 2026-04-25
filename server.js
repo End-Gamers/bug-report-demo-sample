@@ -1,11 +1,14 @@
 #!/usr/bin/env node
-// 정적 파일 서빙 + /log 엔드포인트 (브라우저 에러 수집)
-import http from 'node:http';
-import fs   from 'node:fs';
-import path from 'node:path';
+// 정적 파일 서빙 + /log 엔드포인트 (브라우저 에러 수집) + /api/bedrock 프록시
+import http            from 'node:http';
+import https           from 'node:https';
+import fs              from 'node:fs';
+import path            from 'node:path';
+import { fileURLToPath } from 'node:url';
+
+const ROOT = path.dirname(fileURLToPath(import.meta.url));
 
 const PORT    = 5059;
-const ROOT    = import.meta.dirname;
 const LOGFILE = '/tmp/browser-errors.log';
 
 const MIME = {
@@ -17,6 +20,39 @@ const MIME = {
 };
 
 const server = http.createServer((req, res) => {
+  // ── POST /api/bedrock : CORS 우회 프록시 ────────────────────────────────────
+  if (req.method === 'POST' && req.url === '/api/bedrock') {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    let body = '';
+    req.on('data', chunk => { body += chunk; });
+    req.on('end', () => {
+      let parsed;
+      try { parsed = JSON.parse(body); }
+      catch { res.writeHead(400); res.end('{"message":"bad request"}'); return; }
+
+      const { endpoint, headers, body: bedrockBody } = parsed;
+      const url = new URL(endpoint);
+      const options = {
+        hostname: url.hostname,
+        path:     url.pathname + url.search,
+        method:   'POST',
+        headers:  { ...headers, host: url.hostname },
+      };
+
+      const bedrockReq = https.request(options, bedrockRes => {
+        res.writeHead(bedrockRes.statusCode, { 'content-type': 'application/json' });
+        bedrockRes.pipe(res);
+      });
+      bedrockReq.on('error', e => {
+        res.writeHead(502);
+        res.end(JSON.stringify({ message: e.message }));
+      });
+      bedrockReq.write(bedrockBody);
+      bedrockReq.end();
+    });
+    return;
+  }
+
   // ── POST /log : 브라우저 에러 수신 ──────────────────────────────────────────
   if (req.method === 'POST' && req.url === '/log') {
     res.setHeader('Access-Control-Allow-Origin', '*');

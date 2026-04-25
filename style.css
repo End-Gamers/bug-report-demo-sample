@@ -156,6 +156,8 @@ label {
 }
 
 input[type="password"],
+input[type="text"],
+select,
 textarea {
   width: 100%;
   font-family: var(--font-mono);
@@ -170,12 +172,15 @@ textarea {
 }
 
 input[type="password"]::placeholder,
+input[type="text"]::placeholder,
 textarea::placeholder {
   color: var(--color-text-muted);
   font-family: var(--font-sans);
 }
 
 input[type="password"]:focus,
+input[type="text"]:focus,
+select:focus,
 textarea:focus {
   border-color: var(--color-border-focus);
   box-shadow: var(--shadow-focus);
@@ -222,18 +227,19 @@ button[type="submit"]:hover:not(:disabled),
 
 #apikey-form {
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
   gap: .75rem;
 }
 
-#apikey-form > div {
-  flex: 1;
+.form-field,
+.creds-section {
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
 }
 
-#apikey-form label { margin-bottom: .4rem; }
-
 #apikey-form button {
-  flex-shrink: 0;
+  align-self: flex-start;
   padding: .7rem 1.25rem;
 }
 

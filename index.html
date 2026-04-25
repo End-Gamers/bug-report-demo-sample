@@ -115,37 +115,104 @@
 
   <main>
 
-    <!-- (2) API 키 입력 -->
+    <!-- (2) AI 프로바이더 설정 -->
     <section aria-labelledby="apikey-heading">
-      <h2 id="apikey-heading">Groq API 키</h2>
-      <p>키는 세션 동안만 메모리에 보관되며 서버로 전송되지 않습니다.</p>
+      <h2 id="apikey-heading">AI 프로바이더 설정</h2>
+      <p>자격 증명은 세션 동안만 메모리에 보관되며 서버로 전송되지 않습니다.</p>
       <form id="apikey-form" autocomplete="off">
-        <label for="apikey-input">API 키</label>
-        <input
-          type="password"
-          id="apikey-input"
-          name="apikey"
-          placeholder="gsk_..."
-          required
-          spellcheck="false"
-        />
+        <div class="form-field">
+          <label for="provider-select">프로바이더</label>
+          <select id="provider-select" name="provider">
+            <option value="groq">Groq — Llama 3.3 70B (무료)</option>
+            <option value="anthropic">Anthropic — Claude Sonnet 4.6</option>
+            <option value="bedrock-key">AWS Bedrock API Key (ABSK... / bedrock-api-key-...)</option>
+            <option value="bedrock">AWS Bedrock — IAM 자격 증명 (Signature V4)</option>
+          </select>
+        </div>
+
+        <!-- Groq 자격 증명 -->
+        <div id="creds-groq" class="creds-section">
+          <label for="groq-apikey">API 키</label>
+          <input type="password" id="groq-apikey" name="groq-apikey"
+            placeholder="gsk_..." spellcheck="false" />
+        </div>
+
+        <!-- Anthropic 자격 증명 -->
+        <div id="creds-anthropic" class="creds-section" hidden>
+          <label for="anthropic-apikey">API 키</label>
+          <input type="password" id="anthropic-apikey" name="anthropic-apikey"
+            placeholder="sk-ant-..." spellcheck="false" />
+        </div>
+
+        <!-- AWS Bedrock API Key -->
+        <div id="creds-bedrock-key" class="creds-section" hidden>
+          <label for="bedrock-key-region">리전</label>
+          <input type="text" id="bedrock-key-region" name="bedrock-key-region"
+            placeholder="us-east-1" value="us-east-1" spellcheck="false" />
+          <label for="bedrock-apikey">Bedrock API 키</label>
+          <input type="password" id="bedrock-apikey" name="bedrock-apikey"
+            placeholder="ABSK... 또는 bedrock-api-key-..." spellcheck="false" />
+          <label for="bedrock-key-model">모델 ID</label>
+          <input type="text" id="bedrock-key-model" name="bedrock-key-model"
+            placeholder="us.anthropic.claude-sonnet-4-6" spellcheck="false"
+            list="bedrock-model-list" />
+        </div>
+
+        <!-- AWS Bedrock IAM 자격 증명 -->
+        <div id="creds-bedrock" class="creds-section" hidden>
+          <label for="bedrock-region">리전</label>
+          <input type="text" id="bedrock-region" name="bedrock-region"
+            placeholder="us-east-1" value="us-east-1" spellcheck="false" />
+          <label for="bedrock-key-id">Access Key ID</label>
+          <input type="password" id="bedrock-key-id" name="bedrock-key-id"
+            placeholder="AKIA..." spellcheck="false" />
+          <label for="bedrock-secret">Secret Access Key</label>
+          <input type="password" id="bedrock-secret" name="bedrock-secret"
+            spellcheck="false" />
+          <label for="bedrock-model">모델 ID</label>
+          <input type="text" id="bedrock-model" name="bedrock-model"
+            placeholder="us.anthropic.claude-sonnet-4-6" spellcheck="false"
+            list="bedrock-model-list" />
+        </div>
+
         <button type="submit">저장</button>
       </form>
+
+      <datalist id="bedrock-model-list">
+        <option value="us.anthropic.claude-sonnet-4-6">Claude Sonnet 4.6 (권장)</option>
+        <option value="us.anthropic.claude-haiku-4-5-20251001-v1:0">Claude Haiku 4.5 (빠름/저렴)</option>
+        <option value="us.anthropic.claude-sonnet-4-5-20250929-v1:0">Claude Sonnet 4.5</option>
+        <option value="us.anthropic.claude-opus-4-7">Claude Opus 4.7 (고성능)</option>
+        <option value="us.anthropic.claude-opus-4-6-v1">Claude Opus 4.6</option>
+        <option value="us.anthropic.claude-opus-4-5-20251101-v1:0">Claude Opus 4.5</option>
+        <option value="us.anthropic.claude-opus-4-1-20250805-v1:0">Claude Opus 4.1</option>
+      </datalist>
       <output id="apikey-status" role="status" aria-live="polite"></output>
 
       <details class="apikey-help">
-        <summary>API 키 발급 방법 (무료 · 신용카드 불필요)</summary>
-        <ol>
-          <li>
-            <a href="https://console.groq.com/" target="_blank" rel="noopener noreferrer">
-              console.groq.com
-            </a>에 접속해 회원가입합니다.
-          </li>
-          <li>왼쪽 메뉴에서 <strong>API Keys</strong>를 클릭합니다.</li>
-          <li><strong>Create API Key</strong> 버튼으로 키를 생성합니다.</li>
-          <li>생성된 키(<code>gsk_...</code>)를 복사해 위 입력란에 붙여넣습니다.</li>
-        </ol>
-        <p class="apikey-help-note">무료 티어: 분당 30회, 하루 1,000회 요청 가능. Llama 3.3 70B 모델 사용.</p>
+        <summary>프로바이더별 설정 안내</summary>
+        <dl>
+          <dt><strong>Groq</strong> (무료, 신용카드 불필요)</dt>
+          <dd>
+            <a href="https://console.groq.com/" target="_blank" rel="noopener noreferrer">console.groq.com</a>에서
+            API 키(<code>gsk_...</code>)를 발급합니다. 분당 30회, 하루 1,000회 요청 가능.
+          </dd>
+          <dt><strong>Anthropic Claude</strong></dt>
+          <dd>
+            <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer">console.anthropic.com</a>에서
+            API 키(<code>sk-ant-...</code>)를 발급합니다.
+          </dd>
+          <dt><strong>AWS Bedrock API Key</strong></dt>
+          <dd>
+            AWS 콘솔 → Amazon Bedrock → API keys에서 발급합니다.<br>
+            장기 키: <code>ABSK...</code> / 단기 키: <code>bedrock-api-key-...</code>
+          </dd>
+          <dt><strong>AWS Bedrock IAM</strong></dt>
+          <dd>
+            IAM에서 <code>bedrock:InvokeModel</code> 권한이 있는 사용자의 Access Key를 생성합니다.
+            리전에서 Claude 3.5 Sonnet v2 모델 접근이 활성화되어 있어야 합니다.
+          </dd>
+        </dl>
       </details>
     </section>
 
@@ -258,6 +325,6 @@
       _logError('UNHANDLED REJECTION: ' + (e.reason?.message ?? e.reason ?? e));
     });
   </script>
-  <script type="module" src="app.js?v=6"></script>
+  <script type="module" src="lib/app.js?v=7"></script>
 </body>
 </html>

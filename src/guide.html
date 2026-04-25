@@ -667,8 +667,8 @@ p a:hover { border-color: var(--blue); }
         <span class="dir">bug-report-demo-<span class="arg">{닉네임}</span>/</span><br>
         <span class="indent"><span class="dir">├── index.html</span> <span class="comment"># 진입점, 레이아웃 뼈대</span></span><br>
         <span class="indent"><span class="file">├── style.css</span>  <span class="comment"># 디자인 (나중에 채움)</span></span><br>
-        <span class="indent"><span class="file">├── app.js</span>    <span class="comment"># 메인 로직 (이벤트, API 호출)</span></span><br>
         <span class="indent"><span class="dir">├── lib/</span></span><br>
+        <span class="indent2"><span class="file">├── app.js</span>    <span class="comment"># 메인 로직 (이벤트, API 호출)</span></span><br>
         <span class="indent2"><span class="file">├── parser.js</span> <span class="comment"># 로그 파싱 유틸</span></span><br>
         <span class="indent2"><span class="file">└── api.js</span>    <span class="comment"># Claude API 래퍼</span></span><br>
         <span class="indent"><span class="dir">└── .gitignore</span></span>
@@ -681,7 +681,7 @@ p a:hover { border-color: var(--blue); }
         - <code>index.html</code>: 시맨틱 HTML만, CSS/JS 로직 없이. 섹션은 (1) 헤더, (2) API 키 입력, (3) 로그 입력 영역, (4) 분석 결과 영역으로 구성<br>
         - <code>lib/parser.js</code>: 로그 텍스트에서 ERROR/WARN 라인과 스택트레이스를 분리하는 <code>parseJenniferLog(text)</code> 함수 시그니처와 JSDoc만<br>
         - <code>lib/api.js</code>: <code>analyzeLog(parsedLog, apiKey)</code> 함수 시그니처, 반환 타입 정의만<br>
-        - <code>app.js</code>: 이벤트 리스너 연결 구조만, 실제 구현은 TODO로<br>
+        - <code>lib/app.js</code>: 이벤트 리스너 연결 구조만, 실제 구현은 TODO로<br>
         <br>
         실제 구현 코드는 넣지 말고, <strong>구조와 시그니처만</strong> 작성해줘.</p>
         <button class="pbtn" onclick="copyPrompt(this)">COPY</button>
@@ -953,6 +953,115 @@ p a:hover { border-color: var(--blue); }
           <strong>API 키 보안:</strong> 브라우저에서 직접 API를 호출하면 DevTools Network 탭에서 키가 노출됩니다. 이 앱은 본인만 쓰는 내부 도구이므로 괜찮지만, 팀 전체가 쓰는 앱이라면 Node.js/Python 백엔드를 통해 프록시하는 구조로 바꿔야 합니다.
         </div>
       </div>
+
+      <div class="divider" style="margin:32px 0"></div>
+
+      <!-- ── BEDROCK ALTERNATIVE ── -->
+      <h3>AWS Bedrock 대안 (선택)</h3>
+      <p>Groq 대신 <strong>AWS Bedrock</strong>의 Claude 모델을 직접 호출할 수 있습니다. 두 방식의 차이를 먼저 확인하세요.</p>
+
+      <table class="tbl">
+        <thead><tr><th></th><th>Groq (기본)</th><th>AWS Bedrock</th></tr></thead>
+        <tbody>
+          <tr><td><strong>키 발급</strong></td><td>groq.com → API Keys (무료 플랜)</td><td>AWS Console → Bedrock → API keys</td></tr>
+          <tr><td><strong>모델</strong></td><td>llama-3.3-70b-versatile</td><td>us.anthropic.claude-sonnet-4-6 등</td></tr>
+          <tr><td><strong>실행 방법</strong></td><td>HTML 파일 직접 열기 가능</td><td><code style="font-family:var(--mono);font-size:12px;background:var(--surface);padding:1px 6px;border-radius:3px;color:var(--cyan)">node server.js</code> 필수 (CORS 프록시)</td></tr>
+          <tr><td><strong>비용</strong></td><td>무료 티어 있음</td><td>AWS 요금 부과</td></tr>
+        </tbody>
+      </table>
+
+      <h3 style="margin-top:24px">① Bedrock API 키 발급</h3>
+
+      <div class="steps-flow" style="margin-bottom:16px">
+        <div class="flow-item done">
+          <div class="flow-left"><div class="flow-circle">1</div><div class="flow-line"></div></div>
+          <div class="flow-content">
+            <div class="flow-title">AWS Console 접속</div>
+            <div class="flow-desc"><a href="https://console.aws.amazon.com/bedrock" target="_blank" style="color:var(--blue)">console.aws.amazon.com/bedrock</a> → 왼쪽 사이드바 <strong>API keys</strong> 클릭</div>
+          </div>
+        </div>
+        <div class="flow-item done">
+          <div class="flow-left"><div class="flow-circle">2</div><div class="flow-line"></div></div>
+          <div class="flow-content">
+            <div class="flow-title">모델 접근 권한 확인</div>
+            <div class="flow-desc">Bedrock → <strong>Model access</strong> → Anthropic 섹션에서 <code style="font-family:var(--mono);font-size:12px;background:var(--panel);padding:1px 6px;border-radius:3px;color:var(--cyan)">Claude Sonnet 4</code> 활성화 확인 (없으면 Request access)</div>
+          </div>
+        </div>
+        <div class="flow-item done">
+          <div class="flow-left"><div class="flow-circle">3</div><div class="flow-line"></div></div>
+          <div class="flow-content">
+            <div class="flow-title">API 키 생성</div>
+            <div class="flow-desc"><strong>Create API key</strong> → 이름 입력 → Create → 발급된 키 복사<br><small style="color:var(--dim)">키 형태: <code style="font-family:var(--mono);font-size:11px">ABSK...</code> (장기) 또는 <code style="font-family:var(--mono);font-size:11px">bedrock-api-key-YmVk...</code> (단기) — 두 형태 모두 동작합니다</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-icon">⚠️</div>
+        <div class="callout-body">
+          <strong>Bedrock은 반드시 <code>node server.js</code>로 실행해야 합니다.</strong> 브라우저가 AWS Bedrock을 직접 호출하면 CORS 오류가 납니다. <code>server.js</code>가 <code>/api/bedrock</code> 프록시를 제공하므로 <strong>VS Code Live Server (포트 5501)가 아니라</strong> 아래 명령으로 서버를 실행한 뒤 <code>http://localhost:5059</code>를 열어야 합니다.
+        </div>
+      </div>
+
+      <div class="codeblock">
+        <span class="cm"># 프로젝트 루트에서 (package.json에 "type": "module" 필요)</span><br>
+        <span class="prompt">$</span><span class="cmd"> node server.js</span><br>
+        <br>
+        <span class="cm"># 브라우저에서 열기</span><br>
+        <span class="hl">http://localhost:5059</span>
+        <button class="cbtn" onclick="copyCode(this)">COPY</button>
+      </div>
+
+      <div class="callout callout-info">
+        <div class="callout-icon">💡</div>
+        <div class="callout-body">
+          <strong><code>node server.js</code>가 없다면?</strong> 프로젝트에 <code>server.js</code>가 없을 경우, Claude에게 다음 프롬프트로 만들어달라고 하세요 (아래 ② 프롬프트 참고). <code>package.json</code>도 <code>&#123; "type": "module" &#125;</code> 내용으로 생성이 필요합니다.
+        </div>
+      </div>
+
+      <h3 style="margin-top:24px">② Bedrock 지원 server.js 생성 요청</h3>
+      <div class="prompt-block">
+        <p>브라우저에서 AWS Bedrock을 직접 호출하면 CORS 오류가 나서, Node.js 로컬 프록시가 필요해.<br><br>
+        아래 기능을 하는 <code>server.js</code>를 작성해줘:<br>
+        - 정적 파일 서빙 (루트 폴더 기준 index.html, style.css, lib/ 등)<br>
+        - <code>POST /api/bedrock</code>: 요청 바디 <code>&#123; endpoint, headers, body &#125;</code>를 받아 AWS Bedrock endpoint로 <code>https.request</code> 전달 후 응답 파이프<br>
+        - ES module 방식 (<code>import</code>), Node.js 18+ 호환<br>
+        - 포트 5059에서 실행<br><br>
+        <code>package.json</code>도 <code>&#123; "type": "module" &#125;</code>으로 만들어줘.</p>
+        <button class="pbtn" onclick="copyPrompt(this)">COPY</button>
+      </div>
+
+      <h3 style="margin-top:24px">③ Bedrock 지원 api.js 구현 요청</h3>
+      <div class="prompt-block">
+        <p>lib/api.js를 수정해서 Groq와 AWS Bedrock API 키 방식을 모두 지원하게 해줘.<br><br>
+        함수 시그니처: <code>analyzeLog(parsedLog, provider, credentials)</code><br><br>
+        지원 프로바이더:<br>
+        - <code>'groq'</code> — credentials: <code>&#123; apiKey &#125;</code>, 기존 Groq 구현 유지<br>
+        - <code>'bedrock-key'</code> — credentials: <code>&#123; apiKey, region, model &#125;</code><br><br>
+        Bedrock 구현 요구사항:<br>
+        - 엔드포인트: <code>https://bedrock-runtime.&#123;region&#125;.amazonaws.com/model/&#123;encodeURIComponent(model)&#125;/converse</code><br>
+        - 요청은 직접 fetch하지 말고 <code>fetch('/api/bedrock', &#123; body: JSON.stringify(&#123;endpoint, headers, body&#125;) &#125;)</code>로 로컬 프록시 경유<br>
+        - Authorization 헤더: <code>Bearer &#123;apiKey&#125;</code><br>
+        - 요청 바디: <code>&#123; system:[&#123;text:SYSTEM_PROMPT&#125;], messages:[&#123;role:'user',content:[&#123;text:prompt&#125;]&#125;], inferenceConfig:&#123;maxTokens:4096&#125; &#125;</code><br>
+        - 응답 파싱: <code>body.output.message.content[0].text</code><br>
+        - 권장 모델: <code>us.anthropic.claude-sonnet-4-6</code><br><br>
+        에러 처리(401/403, 429, 400, 네트워크, 파싱)는 Groq 버전과 동일하게.</p>
+        <button class="pbtn" onclick="copyPrompt(this)">COPY</button>
+      </div>
+
+      <h3 style="margin-top:24px">④ UI에 프로바이더 선택기 추가</h3>
+      <div class="prompt-block">
+        <p>index.html의 API 키 입력 섹션을 수정해줘.<br><br>
+        - <code>&lt;select&gt;</code> 드롭다운으로 프로바이더 선택: <strong>Groq</strong> / <strong>AWS Bedrock (API 키)</strong><br>
+        - Groq 선택 시: API 키 입력 필드 1개<br>
+        - Bedrock 선택 시: 리전(기본값 us-east-1) + API 키 + 모델 ID 입력 필드<br>
+        - 선택에 따라 관련 없는 필드는 <code>hidden</code>으로 숨기기<br>
+        - 기본 선택: Groq<br><br>
+        app.js도 선택된 프로바이더에 맞는 credentials를 조합해서 <code>analyzeLog(parsedLog, provider, credentials)</code>를 호출하도록 수정해줘.</p>
+        <button class="pbtn" onclick="copyPrompt(this)">COPY</button>
+      </div>
+
+      <div class="divider" style="margin:32px 0"></div>
 
       <h3 style="margin-top:20px">app.js 이벤트 연결</h3>
       <div class="prompt-block">
